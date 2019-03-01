@@ -982,8 +982,8 @@ clear current_power
 
 %finds the frequencies you want
 % freqband = [15 35]; %beta
-freqband = [8 14]; %alpha
-% freqband = [8 11]; %low alpha
+% freqband = [8 14]; %alpha
+freqband = [8 11]; %low alpha
 % freqband = [10 14]; %high alpha
 % freqband = [3 8]; %theta
 freqlim = find(freqs>=(freqband(1)-0.5) & freqs<=(freqband(2)+0.5));
@@ -1004,8 +1004,8 @@ freqlim = find(freqs>=(freqband(1)-0.5) & freqs<=(freqband(2)+0.5));
 
 % timewin = [-600 -400];
 % timewin = [-400 -200];
-% timewin = [-200 0];
-timewin = [0 200];
+timewin = [-200 0];
+% timewin = [0 200];
 % timewin = [200 400];
 % timewin = [400 600];
 timelim = find(times>=timewin(1) & times<=timewin(2));
@@ -1530,12 +1530,46 @@ set(get(t,'ylabel'),'String', 'Guess Rate (g)');
 clear temp
 
 
-
+% /////////////////////////////////////////////////////////////////////////
 
 % clears variables that end with...
 clear -regexp _Hpwr\> _Lpwr\>
 clear sgnrank_pwr ttest_pwr ttest_pwr_stats ttest_pwr_ci sgnrank_pwr_stats sgnrank_pwr_ci...
-    T
+    T model
+
+
+% /////////////////////////////////////////////////////////////////////////
+% Model fit collapsed across subjects
+
+i_elect = exp.singletrialselecs(2); 
+
+% Put all the response errors across subjects into vector
+resp_errdeg_cat_Hpwr = cat(2,errdeg_Hpwr{1:end,i_elect});
+resp_errdeg_cat_Lpwr = cat(2,errdeg_Hpwr{1:end,i_elect});
+
+% Fit all errors to mixed model
+model = StandardMixtureModel(); %standard 2 parameter model
+% model = WithBias(StandardMixtureModel); %model with mu
+model_out_cat_Hpwr = MemFit(resp_errdeg_cat_Hpwr,model); %fits with plotting
+model_out_cat_Lpwr = MemFit(resp_errdeg_cat_Lpwr,model); %fits with plotting
+
+
+clear resp_errdeg_cat_Hpwr resp_errdeg_cat_Lpwr model_out_cat_Hpwr model_out_cat_Lpwr...
+    model
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
