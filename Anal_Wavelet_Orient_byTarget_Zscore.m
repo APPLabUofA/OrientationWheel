@@ -983,9 +983,9 @@ clear current_power
 %finds the frequencies you want
 % freqband = [15 35]; %beta
 % freqband = [8 14]; %alpha
-freqband = [8 11]; %low alpha
+% freqband = [8 11]; %low alpha
 % freqband = [10 14]; %high alpha
-% freqband = [3 8]; %theta
+freqband = [3 8]; %theta
 freqlim = find(freqs>=(freqband(1)-0.5) & freqs<=(freqband(2)+0.5));
 
 %finds the times you want from the times variable
@@ -1004,8 +1004,8 @@ freqlim = find(freqs>=(freqband(1)-0.5) & freqs<=(freqband(2)+0.5));
 
 % timewin = [-600 -400];
 % timewin = [-400 -200];
-timewin = [-200 0];
-% timewin = [0 200];
+% timewin = [-200 0];
+timewin = [0 200];
 % timewin = [200 400];
 % timewin = [400 600];
 timelim = find(times>=timewin(1) & times<=timewin(2));
@@ -1072,8 +1072,8 @@ sd_out_Lpwr = NaN(length(exp.participants),length(exp.singletrialselecs)); %pre-
 mu_out_Hpwr = NaN(length(exp.participants),length(exp.singletrialselecs)); %pre-allocate
 mu_out_Lpwr = NaN(length(exp.participants),length(exp.singletrialselecs)); %pre-allocate
 % Fit errors to mixed model
-model = StandardMixtureModel(); %standard 2 parameter model
-% model = WithBias(StandardMixtureModel); %model with mu
+% model = StandardMixtureModel(); %standard 2 parameter model
+model = WithBias(StandardMixtureModel); %model with mu
 for i_part = 1:length(exp.participants)
     for ii = 1:length(exp.singletrialselecs)
 %     for ii = 1:5 %only central electrodes
@@ -1248,7 +1248,7 @@ clear sgnrank_pwr ttest_pwr ttest_pwr_stats ttest_pwr_ci sgnrank_pwr_stats sgnra
 [h,crit_p,adj_ci,adj_pn] = fdr_bh(T.g(:,1),0.05);
 clear h crit_p adj_ci adj_p adj_pz adj_pn
 
-i_elect=exp.singletrialselecs(ii);
+i_elect=exp.singletrialselecs(31);
 
 mean(g_out_Hpwr(:,i_elect))
 mean(g_out_Lpwr(:,i_elect))
@@ -1264,11 +1264,13 @@ std(sd_out_Hpwr(:,i_elect))
 std(sd_out_Lpwr(:,i_elect))
 
 
+i_elect=exp.singletrialselecs(31);
 
-mean(mean_errdeg_Hpwr(:,i_elect))
-mean(mean_errdeg_Lpwr(:,i_elect))
+mean(mu_out_Hpwr(:,i_elect))
+mean(mu_out_Lpwr(:,i_elect))
 
-
+std(mu_out_Hpwr(:,i_elect))
+std(mu_out_Lpwr(:,i_elect))
 
 
 
@@ -1421,7 +1423,6 @@ clear i_part
 %% Create topoplots
 % Guess rate topoplots
 CLim = [0.15 0.25]; %set power scale of plot
-colormap('warm')
     
 figure('Color',[1 1 1],'Position',[1 1 941 349]);
 temp = mean(g_out_Hpwr(:,:),1)';
@@ -1429,6 +1430,7 @@ temp(1) = NaN; %not M2 electrode
 subplot(1,2,1);
 topoplot(temp,ALLEEG(1).chanlocs,'whitebk','on','plotrad',0.6,'maplimits',CLim,...
     'plotchans',elect_erp,'emarker',{'.','k',11,1})
+colormap('summer')
 title('High Power');
 t = colorbar('peer',gca);
 set(get(t,'ylabel'),'String', 'Guess Rate (g)');
@@ -1439,6 +1441,7 @@ temp(1) = NaN; %not M2 electrode
 subplot(1,2,2);
 topoplot(temp,ALLEEG(1).chanlocs,'whitebk','on','plotrad',0.6,'maplimits',CLim,...
     'plotchans',elect_erp,'emarker',{'.','k',11,1})
+colormap('summer')
 title('Low Power');
 t = colorbar('peer',gca);
 set(get(t,'ylabel'),'String', 'Guess Rate (g)');
@@ -1453,7 +1456,6 @@ clear CLim
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % SD topoplots
 CLim = [9 13]; %set power scale of plot
-colormap('jet')
     
 figure('Color',[1 1 1],'Position',[1 1 941 349]);
 temp = mean(sd_out_Hpwr(:,:),1)';
@@ -1461,6 +1463,7 @@ temp(1) = NaN; %not M2 electrode
 subplot(1,2,1);
 topoplot(temp,ALLEEG(1).chanlocs,'whitebk','on','plotrad',0.6,'maplimits',CLim,...
     'plotchans',elect_erp,'emarker',{'.','k',11,1})
+colormap('summer')
 title('High Power');
 t = colorbar('peer',gca);
 set(get(t,'ylabel'),'String', 'Quality (SD)');
@@ -1471,6 +1474,7 @@ temp(1) = NaN; %not M2 electrode
 subplot(1,2,2);
 topoplot(temp,ALLEEG(1).chanlocs,'whitebk','on','plotrad',0.6,'maplimits',CLim,...
     'plotchans',elect_erp,'emarker',{'.','k',11,1})
+colormap('summer')
 title('Low Power');
 t = colorbar('peer',gca);
 set(get(t,'ylabel'),'String', 'Quality (SD)');
@@ -1485,14 +1489,14 @@ clear CLim
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % Mu topoplots
 CLim = [-1.5 1.5]; %set power scale of plot
-colormap('jet')
     
 figure('Color',[1 1 1],'Position',[1 1 941 349]);
 temp = mean(mu_out_Hpwr(:,:),1)';
 temp(1) = NaN; %not M2 electrode
 subplot(1,2,1);
-topoplot(temp,ALLEEG(1).chanlocs,'whitebk','on','plotrad',0.6,'maplimits',CLim,...
+topoplot(temp,EEG.chanlocs,'whitebk','on','plotrad',0.6,'maplimits',CLim,...
     'plotchans',elect_erp,'emarker',{'.','k',11,1})
+colormap('summer')
 title('High Power');
 t = colorbar('peer',gca);
 set(get(t,'ylabel'),'String', 'Bias (mu)');
@@ -1501,15 +1505,16 @@ clear temp
 temp = mean(mu_out_Lpwr(:,:),1)';
 temp(1) = NaN; %not M2 electrode
 subplot(1,2,2);
-topoplot(temp,ALLEEG(1).chanlocs,'whitebk','on','plotrad',0.6,'maplimits',CLim,...
+topoplot(temp,EEG.chanlocs,'whitebk','on','plotrad',0.6,'maplimits',CLim,...
     'plotchans',elect_erp,'emarker',{'.','k',11,1})
+colormap('summer')
 title('Low Power');
 t = colorbar('peer',gca);
 set(get(t,'ylabel'),'String', 'Bias (mu)');
 clear temp
     
 % Overall subplot title
-supertitle(['Mu (3 params): ' num2str(freqband(1)) '-' num2str(freqband(2)) ' Hz: ' num2str(timewin(1)) ' to ' num2str(timewin(2)) ' ms'],...
+supertitle(['Mu: ' num2str(freqband(1)) '-' num2str(freqband(2)) ' Hz: ' num2str(timewin(1)) ' to ' num2str(timewin(2)) ' ms'],...
     'FontSize',10.5)
 
 clear CLim
@@ -1521,55 +1526,24 @@ CLim = [-0.02 0.02]; %set power scale of plot
 
 temp = mean((g_out_Hpwr(:,:)-g_out_Lpwr(:,:)),1)';
 temp(1) = NaN; %not M2 electrode
+figure('Color',[1 1 1])
 topoplot(temp,ALLEEG(1).chanlocs,'whitebk','on','plotrad',0.6,'maplimits',CLim,...
     'plotchans',elect_erp,'emarker',{'.','k',11,1})
 colormap('summer')
-title('High Power - Low Power');
+title(['High-Low Power: ' num2str(freqband(1)) '-' num2str(freqband(2)) ' Hz: ' num2str(timewin(1)) ' to ' num2str(timewin(2)) ' ms']);
 t = colorbar('peer',gca);
-set(get(t,'ylabel'),'String', 'Guess Rate (g)');
-clear temp
+set(get(t,'ylabel'),'String', 'Guess Rate (g) Difference');
+clear temp CLim
 
 
-% /////////////////////////////////////////////////////////////////////////
+% -------------------------------------------------------------------------
+% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% -------------------------------------------------------------------------
 
 % clears variables that end with...
 clear -regexp _Hpwr\> _Lpwr\>
 clear sgnrank_pwr ttest_pwr ttest_pwr_stats ttest_pwr_ci sgnrank_pwr_stats sgnrank_pwr_ci...
-    T model
-
-
-% /////////////////////////////////////////////////////////////////////////
-% Model fit collapsed across subjects
-
-i_elect = exp.singletrialselecs(2); 
-
-% Put all the response errors across subjects into vector
-resp_errdeg_cat_Hpwr = cat(2,errdeg_Hpwr{1:end,i_elect});
-resp_errdeg_cat_Lpwr = cat(2,errdeg_Hpwr{1:end,i_elect});
-
-% Fit all errors to mixed model
-model = StandardMixtureModel(); %standard 2 parameter model
-% model = WithBias(StandardMixtureModel); %model with mu
-model_out_cat_Hpwr = MemFit(resp_errdeg_cat_Hpwr,model); %fits with plotting
-model_out_cat_Lpwr = MemFit(resp_errdeg_cat_Lpwr,model); %fits with plotting
-
-
-clear resp_errdeg_cat_Hpwr resp_errdeg_cat_Lpwr model_out_cat_Hpwr model_out_cat_Lpwr...
-    model
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    T
 
 
 
